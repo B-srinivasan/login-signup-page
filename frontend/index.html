@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Registration Form</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">Budget Tracker</a>
+            <ul class="items">
+                <li class="item">
+                    <a href="#" class="link">Home</a>
+                    <a href="#" class="link">Services</a>
+                    <a href="#" class="link">Contact</a>
+                </li>
+            </ul>
+            <button class="button" id="form-open">Login</button>
+        </nav>
+    </header>
+
+    <!-- Home -->
+    <section class="home">
+        <div class="form_container">
+            <i class="uil uil-times form_close"></i>
+            
+            <!-- Login Form -->
+            <div class="form login_form">
+                <form action="/login" method="POST" id="loginForm">
+                    <h2>Login</h2>
+
+                    <div class="input_box">
+                        <input type="text" name="name" placeholder="Enter your username" required />
+                        <i class="uil uil-envelope-alt username"></i>
+                    </div>
+                    <div class="input_box">
+                        <input type="password" name="password" placeholder="Enter your password" required />
+                    </div>
+
+                    <div class="option_field">
+                        <span class="checkbox">
+                            <input type="checkbox" id="check" />
+                            <label for="check">Remember me</label>
+                        </span>
+                        <a href="#" class="forgot_pw">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="button">Login Now</button>
+
+                    <div class="login_signup">Don't have an account? <a href="#" id="signup">Signup</a></div>
+                </form>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="form signup_form">
+                <form action="/signup" method="POST" id="signupForm">
+                    <h2>Signup</h2>
+
+                    <div class="input_box">
+                        <input type="text" name="name" placeholder="Enter your username" required />
+                        <i class="uil uil-envelope-alt username"></i>
+                    </div>
+                    <div class="input_box">
+                        <input type="password" name="createpassword" placeholder="Create password" required />
+                    </div>
+                    <div class="input_box">
+                        <input type="password" name="password" placeholder="Confirm password" required />
+                    </div>
+
+                    <button type="submit" class="button">Signup Now</button>
+
+                    <div class="login_signup">Already have an account? <a href="#" id="loginLink">Login</a></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+
+    <script>
+        // Toggle between Login and Signup forms
+        document.getElementById('signup').addEventListener('click', function() {
+            document.querySelector('.login_form').style.display = 'none';
+            document.querySelector('.signup_form').style.display = 'block';
+        });
+
+        document.getElementById('loginLink').addEventListener('click', function() {
+            document.querySelector('.signup_form').style.display = 'none';
+            document.querySelector('.login_form').style.display = 'block';
+        });
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const name = event.target.name.value;
+            const password = event.target.password.value;
+
+            if (!name || !password) {
+                alert("Name and Password are required❌");
+                return;
+            }
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, password })
+            });
+
+            const data = await response.text();
+            if (response.ok) {
+                window.location.href = '/user.html';  // Redirect to user page on successful login
+            } else {
+                alert(data);  // Show the error message if login fails
+            }
+        });
+
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const name = event.target.name.value;
+            const createpassword = event.target.createpassword.value;
+            const password = event.target.password.value;
+
+            if (createpassword !== password) {
+                alert("Passwords do not match❌");
+                return;
+            }
+
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, createpassword, password })
+            });
+
+            const data = await response.text();
+            if (response.ok) {
+                alert("User registered successfully!");
+                document.querySelector('.signup_form').style.display = 'none';
+                document.querySelector('.login_form').style.display = 'block';
+            } else {
+                alert(data);  // Show the error message if signup fails
+            }
+        });
+    </script>
+
+</body>
+</html>
